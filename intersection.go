@@ -16,17 +16,23 @@ const (
 )
 
 type Game struct {
-	//here all the global variables are stored
-	width, height int //screen size
-	l1, l2        l
+	width, height int
+	l1, l2        line
+	c             circle
 }
 
-type v struct { //vector
+type vector struct {
 	x, y int
 }
 
-type l struct { //line
-	a, b v
+type line struct {
+	a, b vector
+	clr  color.RGBA
+}
+
+type circle struct {
+	r   int
+	clr color.RGBA
 }
 
 //---------------------------Update-------------------------------------
@@ -39,13 +45,16 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	//Line Draw
-	ebitenutil.DrawLine(screen, fl(g.l1.a.x), fl(g.l1.a.y), fl(g.l1.b.x), fl(g.l1.b.y), color.RGBA{255, 100, 100, 255})
-	ebitenutil.DrawLine(screen, fl(g.l2.a.x), fl(g.l2.a.y), fl(g.l2.b.x), fl(g.l2.b.y), color.RGBA{100, 255, 100, 255})
+	ebitenutil.DrawLine(screen, fl((g.width/2)+g.l1.a.x), fl((g.height/2)+g.l1.a.y), fl((g.width/2)+g.l1.b.x), fl((g.height/2)+g.l1.b.y), g.l1.clr)
+	ebitenutil.DrawLine(screen, fl((g.width/2)+g.l2.a.x), fl((g.height/2)+g.l2.a.y), fl((g.width/2)+g.l2.b.x), fl((g.height/2)+g.l2.b.y), g.l2.clr)
+	p := intersectionPoint(g.l1, g.l2)
+	//fmt.Println(p)
+	ebitenutil.DrawCircle(screen, fl((g.width/2)+p.x), fl((g.height/2)+p.y), fl(g.c.r), g.c.clr)
 }
 
 //-------------------------Functions----------------------------------
 
-func intersectionPoint(l1, l2 l) (p v) {
+func intersectionPoint(l1, l2 line) (p vector) {
 	a, v, b, u := l1.a, l1.b, l2.a, l2.b
 
 	t1 := (u.x*(a.y-b.y) + u.y*(b.x-a.x)) / (u.y*v.x - u.x*v.y)
@@ -69,8 +78,9 @@ func main() {
 
 	//creating game instance
 	g := &Game{width: sW, height: sH,
-		l1: l{v{(sW / 2) + 100, (sH / 2) + 50}, v{(sW / 2) - 100, (sH / 2) - 50}},
-		l2: l{v{(sW / 2) - 100, (sH / 2) + 100}, v{(sW / 2) + 100, (sH / 2) - 100}}}
+		l1: line{vector{100, 50}, vector{-100, -50}, color.RGBA{255, 100, 100, 255}},
+		l2: line{vector{-100, 100}, vector{100, -100}, color.RGBA{100, 255, 100, 255}},
+		c:  circle{r: 5, clr: color.RGBA{100, 100, 255, 255}}}
 
 	//running game
 	if err := ebiten.RunGame(g); err != nil {
