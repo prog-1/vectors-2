@@ -10,25 +10,25 @@ import (
 )
 
 const (
-	screenWidth  = 640
-	screenHeight = 480
+	screenWidth, screenHeight         = 640, 480
+	halfScreenWidth, halfScreenHeight = screenWidth / 2, screenHeight / 2
 )
 
-type vector struct {
+type vec struct {
 	x, y float64
 }
 
-func sub(a, b vector) vector {
-	return vector{a.x - b.x, a.y - b.y}
+func sub(a, b vec) vec {
+	return vec{a.x - b.x, a.y - b.y}
 }
 
-func IntersectionPoint(a, v, b, u vector) (vector, bool) {
+func IntersectionPoint(a, v, b, u vec) (vec, bool) {
 	if u.x*v.y == u.y*v.x { // are parallel
-		return vector{}, false
+		return vec{}, false
 	}
 	t1 := (u.x*(a.y-b.y) + u.y*(b.x-a.x)) / (u.y*v.x - u.x*v.y)
 	t2 := (v.x*(a.y-b.y) + v.y*(b.x-a.x)) / (u.y*v.x - u.x*v.y)
-	return vector{
+	return vec{
 		a.x + v.x*t1,
 		a.y + v.y*t1,
 	}, (t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1)
@@ -55,9 +55,8 @@ func (g *game) Draw(screen *ebiten.Image) {
 func main() {
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	g := NewGame()
-	halfScreenWidth, halfScreenHeight := float64(screenWidth)/2, float64(screenHeight)/2
-	a, a1 := vector{-50 + halfScreenWidth, -20 + halfScreenHeight}, vector{40 + halfScreenWidth, 70 + halfScreenHeight}
-	b, b1 := vector{70 + halfScreenWidth, 20 + halfScreenHeight}, vector{-70 + halfScreenHeight, 40 + halfScreenWidth}
+	a, a1 := vec{-50 + halfScreenWidth, -20 + halfScreenHeight}, vec{40 + halfScreenWidth, 70 + halfScreenHeight}
+	b, b1 := vec{70 + halfScreenWidth, 20 + halfScreenHeight}, vec{-70 + halfScreenHeight, 40 + halfScreenWidth}
 	// a, a1 := vector{0, 0}, vector{100, 100}
 	// b, b1 := vector{0, 100}, vector{150, 0}
 	// a, a1 := vector{0 + halfScreenWidth, 0 + halfScreenHeight}, vector{100 + halfScreenWidth, 100 + halfScreenHeight}
