@@ -4,13 +4,11 @@ import "testing"
 
 func TestIncludesPoint(t *testing.T) {
 	for _, tc := range []struct {
-		l1, l2    line
-		want      vector
-		intersect bool
-	}{
-		{line{vector{-5, -2}, vector{4, 7}}, line{vector{7, 2}, vector{-7, 4}}, vector{0, 3}, true},
-	} {
-		got, intersect := IntersectionPoint(&tc.l1, &tc.l2)
+		a, v, b, u vector
+		want       vector
+		intersect  bool
+	}{} {
+		got, intersect := IntersectionPoint(tc.a, tc.v, tc.b, tc.u)
 		if tc.intersect != intersect {
 			switch intersect {
 			case true:
